@@ -1,8 +1,18 @@
+import os
 import sys
 from move_handler import MoveHandler
 from board import Board
 
-sys.path.append('agent') 
+# Get the directory of the current script
+current_script_directory = os.path.dirname(os.path.abspath(__file__))
+
+# Get the parent directory
+parent_directory = os.path.dirname(current_script_directory)
+
+# Add the 'agent' directory to the sys.path
+agent_directory = os.path.join(parent_directory, 'agent')
+sys.path.append(agent_directory)
+
 import checkers_agent 
 import board_evaluator
 

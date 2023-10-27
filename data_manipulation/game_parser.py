@@ -1,8 +1,18 @@
 import re
+import os
 import sys
 import numpy as np
 
-sys.path.append('./agent') 
+# Get the directory of the current script
+current_script_directory = os.path.dirname(os.path.abspath(__file__))
+
+# Get the parent directory
+parent_directory = os.path.dirname(current_script_directory)
+
+# Add the 'agent' directory to the sys.path
+agent_directory = os.path.join(parent_directory, 'agent')
+sys.path.append(agent_directory)
+
 import board_evaluator 
 
 class GameParser():
