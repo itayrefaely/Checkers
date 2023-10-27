@@ -6,7 +6,7 @@ class Square():
         self.size = size
         self.row = row
         self.col = col
-        self.number = Square.computeSquareNumber(row, col)
+        self.number = Square.compute_square_number(row, col)
         self.color = constants.LIGHT_SQUARE if (row + col) % 2 == 0 else constants.DARK_SQUARE
         self.free = True
         self.selected = False
@@ -14,15 +14,15 @@ class Square():
     def draw(self, screen):
         pygame.draw.rect(screen, self.color, pygame.Rect(self.col * self.size, self.row * self.size, self.size, self.size))
     
-    def getCenter(self):
+    def get_center(self):
         x = self.col * self.size + self.size // 2
         y = self.row * self.size + self.size // 2
         return x, y
     
-    def computeSquareNumber(row, col):
+    def compute_square_number(row, col):
         return 8 * (row - 1) + col
     
-    def computeRowAndCol(square_number):
+    def compute_row_and_col(square_number):
         """"
         Returns row, col indeces (between 1 and 8 inclusive)
         """
@@ -31,15 +31,15 @@ class Square():
         return row, col
     
     def select(self, board, pawn_radius):
-        pygame.draw.circle(board.screen, constants.SELECT_COLOR, self.getCenter(), pawn_radius, 4)
+        pygame.draw.circle(board.screen, constants.SELECT_COLOR, self.get_center(), pawn_radius, 4)
         self.selected = True
     
     def deselect(self, board, pawn_radius):
-        pygame.draw.circle(board.screen, constants.DARK_SQUARE, self.getCenter(), pawn_radius, 4)
+        pygame.draw.circle(board.screen, constants.DARK_SQUARE, self.get_center(), pawn_radius, 4)
         self.selected = False
 
-    def isValidSquareNumber(square_number):
+    def is_valid_square_number(square_number):
         return True if 1 <= square_number <= 64 else False
     
-    def isMarginalColumn(square_number):
+    def is_marginal_column(square_number):
         return True if (square_number % 8) == 0 or (square_number % 8) == 1 else False

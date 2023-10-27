@@ -28,12 +28,12 @@ class Board():
         pygame.display.set_caption("Checkers")
 
         # Draw the board squares
-        self.initSquares()
+        self.init_squares()
 
         # Add pawns
-        self.pawnRadius = (self.square_size // 2) - 5
-        self.initBluePawns()
-        self.initRedPawns()
+        self.pawn_radius = (self.square_size // 2) - 5
+        self.init_blue_pawns()
+        self.init_red_pawns()
 
         ####### Add debugging pawns #######
         # pawn = Pawn(4, 5, self.square_size, "blue", self.pawnRadius)
@@ -57,63 +57,63 @@ class Board():
         # self.squares[pawn.square_number].free = False
 
         # Draw frame
-        self.drawFrame()
+        self.draw_frame()
         
         # Update the display
         pygame.display.flip()
 
-    def initSquares(self):
+    def init_squares(self):
         for row in range(1, self.board_size - 1):
             for col in range(1, self.board_size - 1):
                 square = Square(self.square_size, row, col)
                 self.squares.append(square)
                 square.draw(self.screen)
 
-    def initBluePawns(self):
+    def init_blue_pawns(self):
         for row in range(1, 4):
             for col in range(1, self.board_size - 1):
                 if (row + col) % 2 != 0:
-                    pawn = Pawn(col, row, self.square_size, "blue", self.pawnRadius)
+                    pawn = Pawn(col, row, self.square_size, "blue", self.pawn_radius)
                     self.blue_team.add(pawn)
                     pawn.draw(self.screen)
 
                     # Mark the relevant square as not free
                     self.squares[pawn.square_number].free = False
 
-    def initRedPawns(self):
+    def init_red_pawns(self):
         for row in range(6, 9):
             for col in range(1, self.board_size - 1):
                 if (row + col) % 2 != 0:
-                    pawn = Pawn(col, row, self.square_size, "red", self.pawnRadius)
+                    pawn = Pawn(col, row, self.square_size, "red", self.pawn_radius)
                     self.red_team.add(pawn)
                     pawn.draw(self.screen)
                    
                     # Mark the relevant square as not free
                     self.squares[pawn.square_number].free = False
 
-    def getSquareSize(self):
+    def get_square_size(self):
         return self.square_size
     
-    def drawFrame(self):
+    def draw_frame(self):
         """"
         Draws the game board frame, including the inner and outer frames, as well as row and column labels.
         """
         frame_color = constants.WHITE
         frame_thickness = 5
 
-        self.drawInnerFrame(frame_color, frame_thickness)
-        self.drawOuterFrame(frame_color, frame_thickness)
-        self.labelRowsAndColumns(frame_color)
+        self.draw_inner_frame(frame_color, frame_thickness)
+        self.draw_outer_frame(frame_color, frame_thickness)
+        self.label_rows_and_columns(frame_color)
 
-    def drawInnerFrame(self, color, thickness):
+    def draw_inner_frame(self, color, thickness):
         inner_frame_rect = pygame.Rect(0.1 * self.board_width - 5, 0.1 * self.board_height - 5, 0.8 * self.board_width + 10, 0.8 * self.board_height + 10)
         pygame.draw.rect(self.screen, color, inner_frame_rect, thickness)
 
-    def drawOuterFrame(self, color, thickness):
+    def draw_outer_frame(self, color, thickness):
         outer_frame_rect = pygame.Rect(0, 0, self.board_width, self.board_height)
         pygame.draw.rect(self.screen, color, outer_frame_rect, thickness)
 
-    def labelRowsAndColumns(self, color):
+    def label_rows_and_columns(self, color):
         font = pygame.font.SysFont('Arial', 30)
         
         for i in range(1, self.board_size - 1):
@@ -133,7 +133,7 @@ class Board():
         """"
         Draws the game board frame, the board itself and pawns
         """
-        self.drawFrame()
+        self.draw_frame()
         for square in self.squares[1:]:
             square.draw(self.screen)
         for pawn in self.blue_team:
@@ -141,7 +141,7 @@ class Board():
         for pawn in self.red_team:
             pawn.draw(self.screen)
 
-    def getOccupyingPawn(self, square_number):
+    def get_occupying_pawn(self, square_number):
         """"
         Retrieve the pawn occupying a given square, if not occupied returns None
         """
@@ -158,7 +158,7 @@ class Board():
             if pawn.square_number == square_number: 
                 return pawn
 
-    def deletePawn(self, pawn):
+    def delete_pawn(self, pawn):
         square_number = pawn.square_number
 
         # Draw a square on top of the pawn 
@@ -171,7 +171,7 @@ class Board():
             self.blue_team.remove(pawn)
         del pawn
 
-    def addPawn(self, pawn):
+    def add_pawn(self, pawn):
         square_number = pawn.square_number
         self.squares[square_number].free = False
         if pawn.color_type == "red": 
@@ -179,14 +179,14 @@ class Board():
         else: 
             self.blue_team.add(pawn)
 
-    def isSquareValidAndFree(self, square_number):
-        return Square.isValidSquareNumber(square_number) and self.squares[square_number].free
+    def is_square_valid_and_free(self, square_number):
+        return Square.is_valid_square_number(square_number) and self.squares[square_number].free
     
-    def promotePawn(self, pawn):
+    def promote_pawn(self, pawn):
         copy = pawn
-        self.deletePawn(pawn)
-        queen = Queen(copy.col, copy.row, self.square_size, copy.color_type, self.pawnRadius, self.screen)
-        self.addPawn(queen)
+        self.delete_pawn(pawn)
+        queen = Queen(copy.col, copy.row, self.square_size, copy.color_type, self.pawn_radius, self.screen)
+        self.add_pawn(queen)
 
     def deserialize(self):
         board_array = np.zeros((8, 8), dtype=int)
@@ -196,8 +196,8 @@ class Board():
                     # Unusable square
                     continue 
                 else:
-                    square_number = Square.computeSquareNumber(row + 1, col + 1)
-                    pawn = self.getOccupyingPawn(square_number)
+                    square_number = Square.compute_square_number(row + 1, col + 1)
+                    pawn = self.get_occupying_pawn(square_number)
                     if not pawn:
                         # Empty square
                         continue
@@ -216,23 +216,23 @@ class Board():
         return board_array
     
     def play_move_on_deserialized_board(deserialized_board, start_square_number, end_square_number, is_capture):
-        start_row, start_col = Square.computeRowAndCol(start_square_number)
-        end_row, end_col = Square.computeRowAndCol(end_square_number)
+        start_row, start_col = Square.compute_row_and_col(start_square_number)
+        end_row, end_col = Square.compute_row_and_col(end_square_number)
 
         prev_pawn_value = deserialized_board[start_row - 1, start_col - 1]
-        cur_pawn_value = Board.getDeserializedPawnValue(prev_pawn_value, end_square_number)
+        cur_pawn_value = Board.get_deserialized_pawn_value(prev_pawn_value, end_square_number)
 
         # Update move on the board
         if is_capture:
-            capture_square_number = Pawn.computeOpponentSquareNumber(start_square_number, end_square_number)
-            capture_row, capture_col = Square.computeRowAndCol(capture_square_number)
+            capture_square_number = Pawn.compute_opponent_square_number(start_square_number, end_square_number)
+            capture_row, capture_col = Square.compute_row_and_col(capture_square_number)
             deserialized_board[capture_row - 1, capture_col - 1] = 0
         deserialized_board[start_row - 1, start_col - 1] = 0
         deserialized_board[end_row - 1, end_col - 1] = cur_pawn_value
 
         return deserialized_board
 
-    def getDeserializedPawnValue(prev_pawn_value, end_square_number):
+    def get_deserialized_pawn_value(prev_pawn_value, end_square_number):
         # end_square is a promotion square
         if (prev_pawn_value == 1 and 57 <= end_square_number <= 64) or \
             (prev_pawn_value == -1 and 1 <= end_square_number <= 8):
