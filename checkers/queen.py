@@ -1,8 +1,5 @@
 import pygame
-import constants
-from square import Square 
 from pawn import Pawn
-from PIL import Image
 
 class Queen(Pawn):
     def __init__(self, col, row, square_size, color, radius, screen):
@@ -10,13 +7,13 @@ class Queen(Pawn):
         super().__init__(col, row, square_size, color, radius, queen=True)
 
         # Load the crown image
-        self.crown = self.loadCrown()
+        self.crown = self.load_crown()
 
         # Draw the queen object when created (is not part of the board initialization)
         self.draw(screen)
 
-    def loadCrown(self):
-        crown_image = pygame.image.load('./checkers/crown-vector-icon.png')
+    def load_crown(self):
+        crown_image = pygame.image.load('./checkers/crown_vector_icon.png')
 
         # Scale the crown image to fit on top of the pawn
         crown_size = (1.5 * self.radius, 1.5 * self.radius)
@@ -36,7 +33,7 @@ class Queen(Pawn):
         screen.blit(self.crown, (crown_x, crown_y))
 
     
-    def computePossibleSquares(self):
+    def compute_possible_squares(self):
         """
         Overrides the original computePossibleSquares method of the Pawn class.
 

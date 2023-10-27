@@ -1,7 +1,7 @@
 import re
 import os
 import string
-from gameParser import GameParser
+from game_parser import GameParser
 
 # Get the current directory of the script
 script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -29,4 +29,4 @@ with open('new_OCA_2.0.pdn', 'w') as outfile:
 game_records = modified_data.split('\n\n')
 
 for game_record in game_records:
-    GameParser.parseGame(game_record.rstrip(string.whitespace))
+    GameParser.parse_game(game_record.rstrip(string.whitespace))

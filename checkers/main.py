@@ -1,8 +1,8 @@
 import sys
 import pygame
 from board import Board
-from moveHandler import MoveHandler
-from agentMoveHandler import AgentMoveHandler
+from move_handler import MoveHandler
+from agent_move_handler import AgentMoveHandler
 
 pygame.init()
 
@@ -40,7 +40,7 @@ while run:
         
     while move_handler.is_player_turn:
         if not pressed:
-            move_handler.initializeNewMove(board)
+            move_handler.initialize_new_move(board)
         # event handler
 
         for event in pygame.event.get():
@@ -51,11 +51,11 @@ while run:
 
                 if not pressed:
                     # first press
-                    if move_handler.isLegalPress(board, mouse_pos, is_first_press=True):
+                    if move_handler.is_legal_press(board, mouse_pos, is_first_press=True):
                         pressed = True
                 else:
                     # Second press
-                    if move_handler.isLegalPress(board, mouse_pos, is_first_press=False):
+                    if move_handler.is_legal_press(board, mouse_pos, is_first_press=False):
                         pressed = False
 
     pygame.display.flip() 
