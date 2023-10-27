@@ -2,3 +2,17 @@
 
 Follows the official game rules of American Checkers, also called English Draughts. \
 Ongoing.
+
+## How to run the code
+
+First install Requirements
+
+```
+pip install pygame numpy
+```
+
+### Run the game
+
+```
+python checkers/main.py
+```
