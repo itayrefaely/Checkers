@@ -1,6 +1,7 @@
 {
     "python.analysis.extraPaths": [
         "./gamebot",
-        "./agent"
+        "./agent",
+        "./checkers"
     ]
 }

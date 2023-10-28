@@ -1,6 +1,5 @@
 import os
 import pickle
-from xgboost import XGBRegressor
 
 class CheckersAgent():
     def __init__(self):

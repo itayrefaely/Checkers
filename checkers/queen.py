@@ -1,3 +1,4 @@
+import os
 import pygame
 from pawn import Pawn
 
@@ -13,7 +14,13 @@ class Queen(Pawn):
         self.draw(screen)
 
     def load_crown(self):
-        crown_image = pygame.image.load('./checkers/crown_vector_icon.png')
+        # Get the directory of the current script
+        current_script_directory = os.path.dirname(os.path.abspath(__file__))
+
+        # Add the file name to the sys.path
+        file_path = os.path.join(current_script_directory, 'crown_vector_icon.png')
+
+        crown_image = pygame.image.load(file_path)
 
         # Scale the crown image to fit on top of the pawn
         crown_size = (1.5 * self.radius, 1.5 * self.radius)

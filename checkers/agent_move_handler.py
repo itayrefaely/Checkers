@@ -1,25 +1,12 @@
-import os
-import sys
 from move_handler import MoveHandler
 from board import Board
-
-# Get the directory of the current script
-current_script_directory = os.path.dirname(os.path.abspath(__file__))
-
-# Get the parent directory
-parent_directory = os.path.dirname(current_script_directory)
-
-# Add the 'agent' directory to the sys.path
-agent_directory = os.path.join(parent_directory, 'agent')
-sys.path.append(agent_directory)
-
-import checkers_agent 
+from checkers_agent import CheckersAgent
 import board_evaluator
 
 class AgentMoveHandler(MoveHandler):
 
     def __init__(self):
-        self.agent = checkers_agent.CheckersAgent()
+        self.agent = CheckersAgent()
     
     def play(self, board):
         blue_pawns_and_captures = self.find_pawns_with_capture_moves(board, board.blue_team)

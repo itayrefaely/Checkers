@@ -9,11 +9,11 @@ current_script_directory = os.path.dirname(os.path.abspath(__file__))
 # Get the parent directory
 parent_directory = os.path.dirname(current_script_directory)
 
-# Add the 'agent' directory to the sys.path
-agent_directory = os.path.join(parent_directory, 'agent')
-sys.path.append(agent_directory)
+# Add the 'checkers' directory to the sys.path
+checkers_directory = os.path.join(parent_directory, 'checkers')
+sys.path.append(checkers_directory)
 
-import board_evaluator 
+import board_evaluator
 
 class GameParser():
 
