@@ -7,11 +7,12 @@ class Queen(Pawn):
         # Call the constructor of the parent class (Pawn) to initialize common attributes
         super().__init__(col, row, square_size, color, radius, queen=True)
 
-        # Load the crown image
-        self.crown = self.load_crown()
+        if screen:
+            # Load the crown image
+            self.crown = self.load_crown()
 
-        # Draw the queen object when created (is not part of the board initialization)
-        self.draw(screen)
+            # Draw the queen object when created (is not part of the board initialization)
+            self.draw(screen)
 
     def load_crown(self):
         # Get the directory of the current script
@@ -64,3 +65,11 @@ class Queen(Pawn):
             possible_squares.remove(square_number + 9)
 
         return possible_squares
+    
+    def copy(self):
+        queen_copy = Queen(self.col, self.row, self.square_size, self.color_type, self.radius, None)
+        queen_copy.highlighted = self.highlighted
+        queen_copy.selected = self.selected
+        queen_copy.can_eat = self.can_eat
+        queen_copy.ate_this_turn = self.ate_this_turn
+        return queen_copy

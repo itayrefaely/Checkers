@@ -6,6 +6,7 @@ class Pawn():
     def __init__(self, col, row, square_size, color, radius, queen = False):
         self.col = col
         self.row = row
+        self.square_size = square_size
         self.pos = (col * square_size + square_size // 2, row * square_size + square_size // 2)
         self.square_number = Square.compute_square_number(row, col)
         self.color_type = color
@@ -167,3 +168,11 @@ class Pawn():
             return True
         
         return False
+    
+    def copy(self):
+        pawn_copy = Pawn(self.col, self.row, self.square_size, self.color_type, self.radius, self.queen)
+        pawn_copy.highlighted = self.highlighted
+        pawn_copy.selected = self.selected
+        pawn_copy.can_eat = self.can_eat
+        pawn_copy.ate_this_turn = self.ate_this_turn
+        return pawn_copy

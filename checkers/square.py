@@ -1,5 +1,6 @@
 import pygame
 import constants
+import copy
 
 class Square():
     def __init__(self, size, row, col):
@@ -43,3 +44,9 @@ class Square():
     
     def is_marginal_column(square_number):
         return True if (square_number % 8) == 0 or (square_number % 8) == 1 else False
+    
+    def copy(self):
+        square_copy = copy.deepcopy(self)
+        square_copy.free = self.free
+        square_copy.selected = self.selected
+        return square_copy

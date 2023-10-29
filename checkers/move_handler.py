@@ -35,7 +35,20 @@ class MoveHandler():
             if possible_jumping_squares:
                 pawns_and_captures[pawn] = possible_jumping_squares
 
-        return pawns_and_captures 
+        return pawns_and_captures
+
+    def find_pawns_with_moves(self, board, pawn_team):
+        """
+        Returns a dictionary where keys are pawns,
+        and values are corresponding sets of the pawn's next possible squares
+        """
+        pawns_and_moves = {}
+        for pawn in pawn_team:
+            next_squares = pawn.get_next_squares(board)
+            if next_squares:
+                pawns_and_moves[pawn] = next_squares
+                
+        return pawns_and_moves  
     
     def highlightPawns_with_possible_moves(self, board, pawn_team):
         for pawn in pawn_team:
@@ -381,7 +394,7 @@ class MoveHandler():
             board.promote_pawn(pawn)
             pygame.display.flip()
 
-    def is_game_over(self, board, pawn_team):
+    def is_losing_team(self, board, pawn_team):
         if len(pawn_team) == 0:
             return True
         

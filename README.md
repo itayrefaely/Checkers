@@ -8,7 +8,7 @@ Ongoing.
 First install Requirements
 
 ```
-pip install pygame numpy
+pip install pygame numpy xgboost
 ```
 
 ### Run the game

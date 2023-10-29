@@ -6,7 +6,7 @@ from square import Square
 import constants
 
 class Board():
-    def __init__(self, width, height):
+    def __init__(self, width, height, is_initial_board=True):
         pygame.init()
 
         # Initiate teams
@@ -18,56 +18,39 @@ class Board():
 
         self.board_size = 10
 
-        # Define number and size of squares
+        # Define parameters
         self.square_size = min(width, height) // self.board_size # 72
         self.board_width = self.board_size * self.square_size    # 720
         self.board_height = self.board_size * self.square_size   # 720
-
-        # Create a pygame surface
-        self.screen = pygame.display.set_mode((self.board_width, self.board_height))
-        pygame.display.set_caption("Checkers")
-
-        # Draw the board squares
-        self.init_squares()
-
-        # Add pawns
         self.pawn_radius = (self.square_size // 2) - 5
-        self.init_blue_pawns()
-        self.init_red_pawns()
-
-        ####### Add debugging pawns #######
-        # pawn = Pawn(4, 5, self.square_size, "blue", self.pawnRadius)
-        # self.blue_team.add(pawn)
-        # pawn.draw(self.screen)
-        # self.squares[pawn.square_number].free = False
+        self.is_initial_board = is_initial_board
         
-        # pawn = Pawn(4, 3, self.square_size, "blue", self.pawnRadius)
-        # self.blue_team.add(pawn)
-        # pawn.draw(self.screen)
-        # self.squares[pawn.square_number].free = False
+        if is_initial_board:
+            # Create a pygame surface
+            self.screen = pygame.display.set_mode((self.board_width, self.board_height))
+            pygame.display.set_caption("Checkers")
 
-        # pawn = Pawn(6, 3, self.square_size, "blue", self.pawnRadius)
-        # self.blue_team.add(pawn)
-        # pawn.draw(self.screen)
-        # self.squares[pawn.square_number].free = False
+            # Add the board squares
+            self.init_squares()
 
-        # pawn = Pawn(2, 5, self.square_size, "blue", self.pawnRadius)
-        # self.blue_team.add(pawn)
-        # pawn.draw(self.screen)
-        # self.squares[pawn.square_number].free = False
+            # Add pawns
+            self.init_blue_pawns()
+            self.init_red_pawns()
 
-        # Draw frame
-        self.draw_frame()
-        
-        # Update the display
-        pygame.display.flip()
+            # ###### Add debugging pawns #######
+            # pawn = Pawn(8, 7, self.square_size, "blue", self.pawn_radius)
+            # self.blue_team.add(pawn)
+            # self.squares[pawn.square_number].free = False
+            
+            # pawn = Pawn(4, 3, self.square_size, "red", self.pawn_radius)
+            # self.red_team.add(pawn)
+            # self.squares[pawn.square_number].free = False
 
     def init_squares(self):
         for row in range(1, self.board_size - 1):
             for col in range(1, self.board_size - 1):
                 square = Square(self.square_size, row, col)
                 self.squares.append(square)
-                square.draw(self.screen)
 
     def init_blue_pawns(self):
         for row in range(1, 4):
@@ -75,7 +58,6 @@ class Board():
                 if (row + col) % 2 != 0:
                     pawn = Pawn(col, row, self.square_size, "blue", self.pawn_radius)
                     self.blue_team.add(pawn)
-                    pawn.draw(self.screen)
 
                     # Mark the relevant square as not free
                     self.squares[pawn.square_number].free = False
@@ -86,7 +68,6 @@ class Board():
                 if (row + col) % 2 != 0:
                     pawn = Pawn(col, row, self.square_size, "red", self.pawn_radius)
                     self.red_team.add(pawn)
-                    pawn.draw(self.screen)
                    
                     # Mark the relevant square as not free
                     self.squares[pawn.square_number].free = False
@@ -160,15 +141,17 @@ class Board():
 
     def delete_pawn(self, pawn):
         square_number = pawn.square_number
-
-        # Draw a square on top of the pawn 
-        self.squares[square_number].draw(self.screen)
-
         self.squares[square_number].free = True
+
+        if self.is_initial_board:
+            # Draw a square on top of the pawn 
+            self.squares[square_number].draw(self.screen)
+
         if pawn.color_type == "red": 
             self.red_team.remove(pawn)
         else: 
             self.blue_team.remove(pawn)
+
         del pawn
 
     def add_pawn(self, pawn):
@@ -183,7 +166,7 @@ class Board():
         return Square.is_valid_square_number(square_number) and self.squares[square_number].free
     
     def promote_pawn(self, pawn):
-        copy = pawn
+        copy = pawn.copy()
         self.delete_pawn(pawn)
         queen = Queen(copy.col, copy.row, self.square_size, copy.color_type, self.pawn_radius, self.screen)
         self.add_pawn(queen)
@@ -240,3 +223,20 @@ class Board():
             return new_pawn_value
         
         return prev_pawn_value
+    
+    def copy(self):
+        board_copy = Board(self.board_width, self.board_height, is_initial_board=False)
+
+        # Copy the squares, except the dummy
+        for square in self.squares[1:]:
+            board_copy.squares.append(square.copy())
+
+        # Copy the pawns
+        for pawn in self.red_team:
+            board_copy.red_team.add(pawn.copy())
+        for pawn in self.blue_team:
+            board_copy.blue_team.add(pawn.copy())
+
+        board_copy.screen = None
+
+        return board_copy
