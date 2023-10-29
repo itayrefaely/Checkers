@@ -6,6 +6,7 @@ from agent_move_handler import AgentMoveHandler
 
 pygame.init()
 
+# Initialize the game board and display
 board = Board(960, 720)
 board.draw()
 pygame.display.flip()
@@ -15,29 +16,25 @@ agent_move_handler = AgentMoveHandler()
 
 run = True
 pressed = False # indicates wheter next pawn to move already chosen
-###### pygame.time.delay(1000)
+# pygame.time.delay(1000)
 
 # main game loop
 while run:
 
     if move_handler.is_losing_team(board, board.blue_team):
-    ########## NEEDS MODIFICATION ##########
         print("Game Over!!! Red wins")
         pygame.quit()
         sys.exit() 
-    ########## NEEDS MODIFICATION ##########
 
-    ###### pygame.time.delay(1000)
+    # pygame.time.delay(1000)
     # Make agent play a move
     agent_move_handler.play(board)
     move_handler.is_player_turn = True
 
     if move_handler.is_losing_team(board, board.red_team):
-    ########## NEEDS MODIFICATION ##########
         print("Game Over!!! Blue wins")
         pygame.quit()
         sys.exit() 
-    ########## NEEDS MODIFICATION ##########
         
     while move_handler.is_player_turn:
         if not pressed:

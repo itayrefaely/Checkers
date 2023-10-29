@@ -37,15 +37,6 @@ class Board():
             self.init_blue_pawns()
             self.init_red_pawns()
 
-            # ###### Add debugging pawns #######
-            # pawn = Pawn(8, 7, self.square_size, "blue", self.pawn_radius)
-            # self.blue_team.add(pawn)
-            # self.squares[pawn.square_number].free = False
-            
-            # pawn = Pawn(4, 3, self.square_size, "red", self.pawn_radius)
-            # self.red_team.add(pawn)
-            # self.squares[pawn.square_number].free = False
-
     def init_squares(self):
         for row in range(1, self.board_size - 1):
             for col in range(1, self.board_size - 1):
