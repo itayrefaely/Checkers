@@ -8,7 +8,7 @@ Ongoing.
 First install Requirements
 
 ```
-pip install pygame numpy xgboost
+pip install pygame numpy sklearn xgboost joblib
 ```
 
 ### Run the game

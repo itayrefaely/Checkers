@@ -66,7 +66,7 @@ class Board:
         return self.square_size
 
     def draw_frame(self):
-        """"
+        """
         Draws the game board frame, including the inner and outer frames, as well as row and column labels.
         """
         frame_color = constants.WHITE
@@ -122,7 +122,7 @@ class Board:
         """
         square_number = int(square_number)
         # Square is not occupied
-        if self.squares[square_number].free == True:
+        if self.squares[square_number].free:
             return None
 
         for pawn in self.red_team:
@@ -192,6 +192,7 @@ class Board:
 
         return board_array
 
+    @staticmethod
     def play_move_on_deserialized_board(deserialized_board, start_square_number, end_square_number, is_capture):
         start_row, start_col = Square.compute_row_and_col(start_square_number)
         end_row, end_col = Square.compute_row_and_col(end_square_number)
@@ -209,6 +210,7 @@ class Board:
 
         return deserialized_board
 
+    @staticmethod
     def get_deserialized_pawn_value(prev_pawn_value, end_square_number):
         # end_square is a promotion square
         if (prev_pawn_value == 1 and 57 <= end_square_number <= 64) or \

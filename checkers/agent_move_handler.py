@@ -44,16 +44,9 @@ class AgentMoveHandler(MoveHandler):
                                                                                                pawn_with_best_move,
                                                                                                best_move_square)
 
-        print(best_move_score)
-
         return pawn_with_best_move, best_move_square
 
     def play_capture(self, board, pawns_and_captures, depth):
-        # if len(pawns_and_captures) == 1:
-        #     pawn = next(iter(pawns_and_captures))
-        #     jump_square_number = pawns_and_captures[pawn].pop()
-        #
-        # else:
         pawn, jump_square_number = self.find_best_capture_move(board, pawns_and_captures, depth)
 
         self.eat(board, pawn, jump_square_number)
@@ -99,7 +92,6 @@ class AgentMoveHandler(MoveHandler):
     def minimax(self, board, depth, alpha, beta, is_maximizing_turn, is_consecutive_capture=False, capturing_pawn=None):
         # Base case
         if self.is_terminal_node(board, depth):
-            print("Terminal node")
             return self.evaluate_board(board)
 
         team, best_move_score = self.initialize_minimax_variables(is_maximizing_turn, board)
@@ -198,7 +190,5 @@ class AgentMoveHandler(MoveHandler):
     def evaluate_board(self, board):
         deserialized_board = board.deserialize()
         board_eval = board_evaluator.get_metrics(deserialized_board)
-
-        # return board_eval[0][0]
         move_score = self.agent.predict(board_eval)
         return move_score

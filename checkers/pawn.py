@@ -1,9 +1,10 @@
 import pygame
 import constants
-from square import Square 
+from square import Square
 
-class Pawn():
-    def __init__(self, col, row, square_size, color, radius, queen = False):
+
+class Pawn:
+    def __init__(self, col, row, square_size, color, radius, queen=False):
         self.col = col
         self.row = row
         self.square_size = square_size
@@ -23,13 +24,13 @@ class Pawn():
         pygame.draw.circle(screen, self.color, self.pos, self.radius)
         pygame.draw.circle(screen, inner_color, self.pos, self.radius - 8)
         pygame.draw.circle(screen, self.color, self.pos, self.radius - 15)
-    
+
     def get_next_squares(self, board):
         """"
         Returns a set of the pawn's next possible squares
         """
         # If the pawn has capturing moves
-        if self.can_eat: 
+        if self.can_eat:
             return self.get_next_jumping_squares(board)
 
         possible_squares = self.compute_possible_squares()
@@ -41,7 +42,7 @@ class Pawn():
         Returns a set of the initial possible squares for the pawn to move to
         """
         possible_squares = set()
-        square_number = self.square_number 
+        square_number = self.square_number
 
         if self.color_type == "red":
             # Leftmost col
@@ -66,8 +67,9 @@ class Pawn():
                 possible_squares.add(square_number + 7)
 
         return possible_squares
-    
-    def filter_invalid_squares(self, possible_squares, board):
+
+    @staticmethod
+    def filter_invalid_squares(possible_squares, board):
         """"
         Removes the invalid squares from the possible squares set
         """
@@ -79,7 +81,7 @@ class Pawn():
 
         next_squares -= to_remove
         return next_squares
-    
+
     def get_next_jumping_squares(self, board):
         """"
         Returns a set of squares that the pawn can move to after a single capture
@@ -91,20 +93,21 @@ class Pawn():
                 jumping_squares.add(jump_square_number)
 
         self.can_eat = bool(jumping_squares)
-        
+
         return jumping_squares
-    
+
     def get_possible_jump_squares(self):
         """"
         Returns an initial list of tuples of rows and columns that the pawn can jump to
         """
         possible_jump_squares = []
-        
-        for square_number in [self.square_number - 18, self.square_number -14, self.square_number + 14, self.square_number + 18]:
-                _, col = Square.compute_row_and_col(square_number)
-                if Square.is_valid_square_number(square_number) and abs(self.col - col) <= 2:
-                    possible_jump_squares.append(square_number)
-        
+
+        for square_number in [self.square_number - 18, self.square_number - 14, self.square_number + 14,
+                              self.square_number + 18]:
+            _, col = Square.compute_row_and_col(square_number)
+            if Square.is_valid_square_number(square_number) and abs(self.col - col) <= 2:
+                possible_jump_squares.append(square_number)
+
         return possible_jump_squares
 
     def is_legal_jump_square(self, board, jump_square_number):
@@ -116,16 +119,17 @@ class Pawn():
         if jump_square.free:
             opponent_square_number = Pawn.compute_opponent_square_number(self.square_number, jump_square_number)
             opponent = board.get_occupying_pawn(opponent_square_number)
-            
+
             if not opponent or self.is_same_team(opponent):
                 return False
 
             opponent_row = opponent.row
             if self.is_legal_capture(opponent_row):
                 return True
-        
+
         return False
 
+    @staticmethod
     def compute_opponent_square_number(start_square_number, jump_square_number):
         """"
         Computes the opponent's square number according to given jump square
@@ -137,8 +141,9 @@ class Pawn():
 
     def is_legal_capture(self, opponent_row):
         # Only queens can capture backwards
-        return self.queen or (self.color_type == "red" and self.row > opponent_row) or (self.color_type == "blue" and self.row < opponent_row)
-    
+        return self.queen or (self.color_type == "red" and self.row > opponent_row) or (
+                    self.color_type == "blue" and self.row < opponent_row)
+
     def highlight(self, board):
         center = self.pos
         pygame.draw.circle(board.screen, constants.HIGHLIGHT_COLOR, center, self.radius, 4)
@@ -166,9 +171,9 @@ class Pawn():
         # Check if pawn made it to opponent's base row
         if (self.color_type == "blue" and self.row == 8) or (self.color_type == "red" and self.row == 1):
             return True
-        
+
         return False
-    
+
     def copy(self):
         pawn_copy = Pawn(self.col, self.row, self.square_size, self.color_type, self.radius, self.queen)
         pawn_copy.highlighted = self.highlighted

@@ -15,10 +15,9 @@ move_handler = MoveHandler()
 agent_move_handler = AgentMoveHandler()
 
 run = True
-pressed = False  # indicates whether next pawn to move already chosen
-# pygame.time.delay(1000)
+pressed = False  # Indicates whether next pawn to move already chosen
 
-# main game loop
+# Main game loop
 while run:
 
     if move_handler.is_losing_team(board, board.red_team):
@@ -29,8 +28,8 @@ while run:
     while move_handler.is_player_turn:
         if not pressed:
             move_handler.initialize_new_move(board)
-        # event handler
 
+        # Event handler
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -53,8 +52,6 @@ while run:
         pygame.quit()
         sys.exit()
 
-    # pygame.time.delay(1000)
-    # Make agent play a move
     agent_move_handler.play(board)
     move_handler.is_player_turn = True
 

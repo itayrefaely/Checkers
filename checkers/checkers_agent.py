@@ -43,8 +43,8 @@ class CheckersAgent:
         board_eval = list(board_eval)
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
-            new_feature_value = self.scaler.transform(board_eval[0].reshape(-1, 1))
-            board_eval[0] = -1
+            new_feature_value = self.scaler.transform(board_eval[0].reshape(-1, 1))[0][0]
+            board_eval[0] = new_feature_value
             board_eval = np.array(board_eval).reshape(1, -1)
         
         return board_eval

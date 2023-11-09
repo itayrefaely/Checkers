@@ -2,6 +2,7 @@ import os
 import pygame
 from pawn import Pawn
 
+
 class Queen(Pawn):
     def __init__(self, col, row, square_size, color, radius, screen):
         # Call the constructor of the parent class (Pawn) to initialize common attributes
@@ -34,20 +35,19 @@ class Queen(Pawn):
         super().draw(screen)
 
         # Calculate the position to center the crown on top of the pawn
-        crown_x = self.pos[0] - 0.75 * self.radius  
-        crown_y = self.pos[1] - 0.9 * self.radius  
+        crown_x = self.pos[0] - 0.75 * self.radius
+        crown_y = self.pos[1] - 0.9 * self.radius
 
         # Draw the crown image on top of the pawn
         screen.blit(self.crown, (crown_x, crown_y))
 
-    
     def compute_possible_squares(self):
         """
         Overrides the original computePossibleSquares method of the Pawn class.
 
         Queens can move backwards.
         """
-        square_number = self.square_number 
+        square_number = self.square_number
         possible_squares = {
             square_number - 9,
             square_number - 7,
@@ -65,7 +65,7 @@ class Queen(Pawn):
             possible_squares.remove(square_number + 9)
 
         return possible_squares
-    
+
     def copy(self):
         queen_copy = Queen(self.col, self.row, self.square_size, self.color_type, self.radius, None)
         queen_copy.highlighted = self.highlighted
