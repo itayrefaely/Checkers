@@ -2,14 +2,15 @@ from move_handler import MoveHandler
 from pawn import Pawn
 from checkers_agent import CheckersAgent
 import board_evaluator
-from queen import Queen
+
 
 class AgentMoveHandler(MoveHandler):
 
     def __init__(self):
+        super().__init__()
         self.agent = CheckersAgent()
-        self.max_depth = 3
-    
+        self.max_depth = 5
+
     def play(self, board):
         depth = 0
         team = board.blue_team
@@ -26,31 +27,34 @@ class AgentMoveHandler(MoveHandler):
 
     def find_best_move(self, board, pawns_and_moves, depth):
         best_move_score = float('-inf')
-        # Can do similar if condition to play_capture
         pawn_with_best_move = None
         best_move_square = None
 
         for pawn, next_possible_square_numbers in pawns_and_moves.items():
             for next_square_number in next_possible_square_numbers:
-                board_copy = board.copy()
-                pawn_copy = board_copy.get_occupying_pawn(pawn.square_number)
-                self.update_move(board_copy, pawn_copy, next_square_number)
-                move_score = self.minimax(board_copy, depth + 1, is_maximizing_turn=False)
+                alpha = float('-inf')  # Initialize alpha to negative infinity
+                beta = float('inf')  # Initialize beta to positive infinity
 
-                if move_score > best_move_score:
-                    best_move_score = move_score
-                    pawn_with_best_move = pawn
-                    best_move_square = next_square_number
-        
+                board_copy, _ = self.make_move_copy(board, pawn, next_square_number, is_capture=False)
+                move_score = self.minimax(board_copy, depth + 1, alpha, beta, is_maximizing_turn=False)
+
+                best_move_score, pawn_with_best_move, best_move_square = self.update_best_move(best_move_score,
+                                                                                               move_score, pawn,
+                                                                                               next_square_number,
+                                                                                               pawn_with_best_move,
+                                                                                               best_move_square)
+
+        print(best_move_score)
+
         return pawn_with_best_move, best_move_square
 
     def play_capture(self, board, pawns_and_captures, depth):
-        if len(pawns_and_captures) == 1:
-            pawn = next(iter(pawns_and_captures))
-            jump_square_number = pawns_and_captures[pawn].pop()
-
-        else:
-            pawn, jump_square_number = self.find_best_capture_move(board, pawns_and_captures, depth)
+        # if len(pawns_and_captures) == 1:
+        #     pawn = next(iter(pawns_and_captures))
+        #     jump_square_number = pawns_and_captures[pawn].pop()
+        #
+        # else:
+        pawn, jump_square_number = self.find_best_capture_move(board, pawns_and_captures, depth)
 
         self.eat(board, pawn, jump_square_number)
 
@@ -66,122 +70,135 @@ class AgentMoveHandler(MoveHandler):
 
         for pawn, possible_jump_square_numbers in pawns_and_captures.items():
             for jump_square_number in possible_jump_square_numbers:
-                board_copy = board.copy()
-                pawn_copy = board_copy.get_occupying_pawn(pawn.square_number)
-                # Delete the opponent pawn
-                opponent_square_number = Pawn.compute_opponent_square_number(pawn_copy.square_number, jump_square_number)
-                self.delete_opponent_pawn(board_copy, opponent_square_number)
+                alpha = float('-inf')  # Initialize alpha to negative infinity
+                beta = float('inf')  # Initialize beta to positive infinity
 
-                self.update_move(board_copy, pawn_copy, jump_square_number)
+                board_copy, pawn_copy = self.make_move_copy(board, pawn, jump_square_number, is_capture=True)
                 next_jumping_squares = pawn_copy.get_next_jumping_squares(board_copy)
 
-                # Consecutive captures possible
-                if next_jumping_squares:
-                    capture_move_score = self.minimax(board_copy, depth, is_maximizing_turn=True, is_consecutive_capture=True, capturing_pawn=pawn_copy)
-                # No consecutive captures
-                else:
-                    capture_move_score = self.minimax(board_copy, depth + 1, is_maximizing_turn=False)
+                capture_move_score = self.get_move_score(board_copy, depth, alpha, beta, pawn_copy,
+                                                         next_jumping_squares, is_maximizing_turn=True)
 
-                if capture_move_score > best_capture_move_score:
-                    best_capture_move_score = capture_move_score
-                    pawn_with_best_capture_move = pawn
-                    best_jump_square = jump_square_number
+                best_capture_move_score, pawn_with_best_capture_move, best_jump_square = self.update_best_move(
+                    best_capture_move_score,
+                    capture_move_score, pawn,
+                    jump_square_number,
+                    pawn_with_best_capture_move,
+                    best_jump_square)
 
         return pawn_with_best_capture_move, best_jump_square
 
-    def minimax(self, board, depth, is_maximizing_turn, is_consecutive_capture=False, capturing_pawn=None):
-        # Base case: check if the node is a terminal node (end of game or max depth)
-        if depth == self.max_depth or self.is_losing_team(board, board.red_team) or self.is_losing_team(board, board.blue_team):
-            return self.evaluate(board)
-        
+    @staticmethod
+    def update_best_move(best_move_score, move_score, pawn, next_square_number, pawn_with_best_move,
+                         best_move_square):
+        if move_score > best_move_score:
+            return move_score, pawn, next_square_number
+        else:
+            return best_move_score, pawn_with_best_move, best_move_square
+
+    def minimax(self, board, depth, alpha, beta, is_maximizing_turn, is_consecutive_capture=False, capturing_pawn=None):
+        # Base case
+        if self.is_terminal_node(board, depth):
+            print("Terminal node")
+            return self.evaluate_board(board)
+
+        team, best_move_score = self.initialize_minimax_variables(is_maximizing_turn, board)
+        pruned = False
+
+        pawns_and_captures = self.get_pawns_and_captures(board, team, is_consecutive_capture, capturing_pawn)
+        if pawns_and_captures:
+            for pawn, possible_jump_square_numbers in pawns_and_captures.items():
+                for jump_square_number in possible_jump_square_numbers:
+                    board_copy, pawn_copy = self.make_move_copy(board, pawn, jump_square_number, is_capture=True)
+                    next_jumping_squares = pawn_copy.get_next_jumping_squares(board_copy)
+
+                    move_score = self.get_move_score(board_copy, depth, alpha, beta, pawn_copy, next_jumping_squares,
+                                                     is_maximizing_turn)
+                    best_move_score = self.update_best_move_score(is_maximizing_turn, best_move_score, move_score)
+
+                    if is_maximizing_turn:
+                        alpha = max(alpha, move_score)
+                    else:
+                        beta = min(beta, move_score)
+                    if beta <= alpha:
+                        pruned = True
+                        break
+
+                if pruned:
+                    break
+        # No possible captures
+        else:
+            pawns_and_moves = self.find_pawns_with_moves(board, team)
+            for pawn, next_possible_square_numbers in pawns_and_moves.items():
+                for next_square_number in next_possible_square_numbers:
+                    board_copy, pawn_copy = self.make_move_copy(board, pawn, next_square_number, is_capture=False)
+                    move_score = self.get_move_score(board_copy, depth, alpha, beta, pawn_copy, None,
+                                                     is_maximizing_turn)
+                    best_move_score = self.update_best_move_score(is_maximizing_turn, best_move_score, move_score)
+
+                    if is_maximizing_turn:
+                        alpha = max(alpha, move_score)
+                    else:
+                        beta = min(beta, move_score)
+                    if beta <= alpha:
+                        pruned = True
+                        break
+
+                if pruned:
+                    break
+
+        return best_move_score
+
+    def is_terminal_node(self, board, depth):
+        return (depth == self.max_depth or
+                self.is_losing_team(board, board.red_team) or
+                self.is_losing_team(board, board.blue_team))
+
+    @staticmethod
+    def initialize_minimax_variables(is_maximizing_turn, board):
         if is_maximizing_turn:
             team = board.blue_team
             best_move_score = float('-inf')
-
-            if is_consecutive_capture:
-                next_jumping_squares = capturing_pawn.get_next_jumping_squares(board)
-                pawns_and_captures = {capturing_pawn: next_jumping_squares}
-            else:
-                pawns_and_captures = self.find_pawns_with_capture_moves(board, team)
-
-            if pawns_and_captures:
-                for pawn, possible_jump_square_numbers in pawns_and_captures.items():
-                    for jump_square_number in possible_jump_square_numbers:
-                        board_copy = board.copy()
-                        pawn_copy = board_copy.get_occupying_pawn(pawn.square_number) 
-                        # Delete the opponent pawn
-                        opponent_square_number = Pawn.compute_opponent_square_number(pawn_copy.square_number, jump_square_number)
-                        self.delete_opponent_pawn(board_copy, opponent_square_number)
-
-                        self.update_move(board_copy, pawn_copy, jump_square_number)
-                        next_jumping_squares = pawn_copy.get_next_jumping_squares(board_copy)
-
-                        # Consecutive captures possible
-                        if next_jumping_squares:
-                            move_score = self.minimax(board_copy, depth, is_maximizing_turn=True, is_consecutive_capture=True, capturing_pawn=pawn_copy)
-                        # No consecutive captures
-                        else:
-                            move_score = self.minimax(board_copy, depth + 1, is_maximizing_turn=False)
-                        
-                        best_move_score = max(best_move_score, move_score)
-            # No captures possible
-            else:
-                pawns_and_moves = self.find_pawns_with_moves(board, team)
-                for pawn, next_possible_square_numbers in pawns_and_moves.items():
-                    for next_square_number in next_possible_square_numbers:
-                        board_copy = board.copy()
-                        pawn_copy = board_copy.get_occupying_pawn(pawn.square_number) 
-                        self.update_move(board_copy, pawn_copy, next_square_number)
-                        move_score = self.minimax(board_copy, depth + 1, is_maximizing_turn=False)
-                        best_move_score = max(best_move_score, move_score)
-        # Minimizing turn
         else:
             team = board.red_team
             best_move_score = float('inf')
+        return team, best_move_score
 
-            if is_consecutive_capture:
-                next_jumping_squares = capturing_pawn.get_next_jumping_squares(board)
-                pawns_and_captures = {capturing_pawn: next_jumping_squares}
-            else:
-                pawns_and_captures = self.find_pawns_with_capture_moves(board, team)
+    def get_pawns_and_captures(self, board, team, is_consecutive_capture, capturing_pawn):
+        if is_consecutive_capture:
+            next_jumping_squares = capturing_pawn.get_next_jumping_squares(board)
+            pawns_and_captures = {capturing_pawn: next_jumping_squares}
+        else:
+            pawns_and_captures = self.find_pawns_with_capture_moves(board, team)
+        return pawns_and_captures
 
-            if pawns_and_captures:
-                for pawn, possible_jump_square_numbers in pawns_and_captures.items():
-                    for jump_square_number in possible_jump_square_numbers:
-                        board_copy = board.copy()
-                        pawn_copy = board_copy.get_occupying_pawn(pawn.square_number) 
-                        # Delete the opponent pawn
-                        opponent_square_number = Pawn.compute_opponent_square_number(pawn_copy.square_number, jump_square_number)
-                        self.delete_opponent_pawn(board_copy, opponent_square_number)
+    def make_move_copy(self, board, pawn, next_square_number, is_capture):
+        board_copy = board.copy()
+        pawn_copy = board_copy.get_occupying_pawn(pawn.square_number)
+        if is_capture:
+            opponent_square_number = Pawn.compute_opponent_square_number(pawn_copy.square_number, next_square_number)
+            self.delete_opponent_pawn(board_copy, opponent_square_number)
+        self.update_move(board_copy, pawn_copy, next_square_number)
+        return board_copy, pawn_copy
 
-                        self.update_move(board_copy, pawn_copy, jump_square_number)
-                        next_jumping_squares = pawn_copy.get_next_jumping_squares(board_copy)
+    def get_move_score(self, board_copy, depth, alpha, beta, pawn, next_jumping_squares, is_maximizing_turn):
+        if next_jumping_squares:
+            return self.minimax(board_copy, depth, alpha, beta, is_maximizing_turn, is_consecutive_capture=True,
+                                capturing_pawn=pawn)
+        else:
+            return self.minimax(board_copy, depth + 1, alpha, beta, is_maximizing_turn=not is_maximizing_turn)
 
-                        # Consecutive captures possible
-                        if next_jumping_squares:
-                            move_score = self.minimax(board_copy, depth, is_maximizing_turn=False, is_consecutive_capture=True, capturing_pawn=pawn_copy)
-                        # No consecutive captures
-                        else:
-                            move_score = self.minimax(board_copy, depth + 1, is_maximizing_turn=True)
-                        
-                        best_move_score = min(best_move_score, move_score)
-            # No captures possible
-            else:
-                pawns_and_moves = self.find_pawns_with_moves(board, team)
-                for pawn, next_possible_square_numbers in pawns_and_moves.items():
-                    for next_square_number in next_possible_square_numbers:
-                        board_copy = board.copy()
-                        pawn_copy = board_copy.get_occupying_pawn(pawn.square_number)
-                        self.update_move(board_copy, pawn_copy, next_square_number)
-                        move_score = self.minimax(board_copy, depth + 1, is_maximizing_turn=True)
-                        best_move_score = min(best_move_score, move_score)
+    @staticmethod
+    def update_best_move_score(is_maximizing_turn, best_move_score, move_score):
+        if is_maximizing_turn:
+            return max(best_move_score, move_score)
+        else:
+            return min(best_move_score, move_score)
 
-        return best_move_score
-        
-    def evaluate(self, board):
+    def evaluate_board(self, board):
         deserialized_board = board.deserialize()
-        board_eval = board_evaluator.get_metrics(deserialized_board).reshape(1, -1)
+        board_eval = board_evaluator.get_metrics(deserialized_board)
 
-        return board_eval[0][0]
-        # move_score = self.agent.predict(board_eval)
-        # return move_score
+        # return board_eval[0][0]
+        move_score = self.agent.predict(board_eval)
+        return move_score
