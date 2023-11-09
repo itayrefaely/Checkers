@@ -1,3 +1,4 @@
+import os
 import pickle
 import joblib
 import warnings
@@ -11,14 +12,26 @@ class CheckersAgent:
 
     @staticmethod
     def load_model(model_filename):
+        # Get the current directory where this Python file is located
+        current_directory = os.path.dirname(os.path.abspath(__file__))
+
+        # Construct the full path to the pickle file
+        full_path = os.path.join(current_directory, model_filename)
+
         # Load the saved model from the pickle file
-        with open(model_filename, 'rb') as file:
+        with open(full_path, 'rb') as file:
             loaded_model = pickle.load(file)
         return loaded_model
 
     @staticmethod
     def load_scaler(scaler_filename):
-        with open(scaler_filename, 'rb') as file:
+        # Get the current directory where this Python file is located
+        current_directory = os.path.dirname(os.path.abspath(__file__))
+
+        # Construct the full path to the pickle file
+        full_path = os.path.join(current_directory, scaler_filename)
+
+        with open(full_path, 'rb') as file:
             scaler = joblib.load(file)
         return scaler
 
