@@ -8,11 +8,11 @@ Ongoing.
 First install Requirements
 
 ```
-pip install pygame numpy sklearn xgboost joblib
+pip install pygame numpy scikit-learn torch joblib
 ```
 
 ### Run the game
 
 ```
-python checkers/main.py
+python path/to/Checkers/checkers/main.py
 ```

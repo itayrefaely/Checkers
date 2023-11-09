@@ -1,13 +1,13 @@
 import os
-import pickle
 import joblib
 import warnings
 import numpy as np
+import torch
 
 
 class CheckersAgent:
     def __init__(self):
-        self.model = self.load_model("agent_model.pkl")
+        self.model = self.load_model("agent_model.pth")
         self.scaler = self.load_scaler("scaler.pkl")
 
     @staticmethod
@@ -18,10 +18,8 @@ class CheckersAgent:
         # Construct the full path to the pickle file
         full_path = os.path.join(current_directory, model_filename)
 
-        # Load the saved model from the pickle file
-        with open(full_path, 'rb') as file:
-            loaded_model = pickle.load(file)
-        return loaded_model
+        model = torch.load(full_path)
+        return model
 
     @staticmethod
     def load_scaler(scaler_filename):
@@ -37,8 +35,15 @@ class CheckersAgent:
 
     def predict(self, board_eval):
         board_eval = self.scale_first_feature_value(board_eval)
-        return self.model.predict(board_eval)
-    
+        board_eval = torch.tensor(board_eval, dtype=torch.float32)
+
+        with torch.no_grad():
+            prediction = self.model(board_eval)
+
+        # Convert the prediction tensor to a numerical value (if needed)
+        predicted_value = prediction.item()
+        return predicted_value
+
     def scale_first_feature_value(self, board_eval):
         board_eval = list(board_eval)
         with warnings.catch_warnings():
