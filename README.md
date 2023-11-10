@@ -11,5 +11,5 @@ pip install pygame numpy scikit-learn torch joblib
 ### Run the game
 From within the Checkers directory, run the following command:
 ```
-python checkers/main.py
+python checkers_game/main.py
 ```

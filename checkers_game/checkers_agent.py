@@ -36,11 +36,9 @@ class CheckersAgent:
     def predict(self, board_eval):
         board_eval = self.scale_first_feature_value(board_eval)
         board_eval = torch.tensor(board_eval, dtype=torch.float32)
-
         with torch.no_grad():
             prediction = self.model(board_eval)
-
-        # Convert the prediction tensor to a numerical value (if needed)
+        # Convert the prediction tensor to a numerical value
         predicted_value = prediction.item()
         return predicted_value
 
