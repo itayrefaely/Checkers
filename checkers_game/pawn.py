@@ -1,6 +1,5 @@
 import os
 import pygame
-import constants
 from square import Square
 
 
@@ -20,8 +19,8 @@ class Pawn:
             self.center = ((col - 1) * square_size + square_size // 2, row * square_size + square_size // 2)
             self.highlighted = False
             self.selected = False
-            self.texture = self.load_texture('white_pawn_icon.png') if self.color_type == "blue" else self.load_texture(
-                'black_pawn_icon.png')
+            self.texture = self.load_texture('white_pawn_icon.png') if self.color_type == "white" else (
+                self.load_texture('black_pawn_icon.png'))
 
     def load_texture(self, pawn_file_name):
         # Get the directory of the current script
@@ -37,10 +36,6 @@ class Pawn:
         pawn_texture = pygame.transform.scale(pawn_image, pawn_size)
 
         return pawn_texture
-
-    def draw(self, screen):
-        x, y = self.get_x_and_y()
-        screen.blit(self.texture, (x, y))
 
     def get_x_and_y(self):
         pawn_x = self.center[0] - 2 * self.radius
@@ -66,7 +61,7 @@ class Pawn:
         possible_squares = set()
         square_number = self.square_number
 
-        if self.color_type == "red":
+        if self.color_type == "black":
             # Leftmost col
             if square_number % 8 == 1:
                 possible_squares.add(square_number - 7)
@@ -76,7 +71,7 @@ class Pawn:
             else:
                 possible_squares.add(square_number - 9)
                 possible_squares.add(square_number - 7)
-        # color_type = "blue"
+        # color_type = "white"
         else:
             # Leftmost col
             if square_number % 8 == 1:
@@ -163,18 +158,18 @@ class Pawn:
 
     def is_legal_capture(self, opponent_row):
         # Only queens can capture backwards
-        return self.queen or (self.color_type == "red" and self.row > opponent_row) or (
-                    self.color_type == "blue" and self.row < opponent_row)
+        return self.queen or (self.color_type == "black" and self.row > opponent_row) or (
+                    self.color_type == "white" and self.row < opponent_row)
 
-    def highlight(self, board):
-        pygame.draw.circle(board.screen, constants.HIGHLIGHT_COLOR, self.center, self.radius, 4)
+    def highlight(self, ui):
+        ui.draw_highlight_pawn(self.center, self.radius)
         self.highlighted = True
 
     def unhighlight(self):
         self.highlighted = False
 
-    def select(self, board):
-        pygame.draw.circle(board.screen, constants.SELECT_COLOR, self.center, self.radius, 4)
+    def select(self, ui):
+        ui.draw_select_pawn(self.center, self.radius)
         self.selected = True
 
     def deselect(self):
@@ -185,7 +180,7 @@ class Pawn:
         if self.queen:
             return False
         # Check if pawn made it to opponent's base row
-        if (self.color_type == "blue" and self.row == 8) or (self.color_type == "red" and self.row == 1):
+        if (self.color_type == "white" and self.row == 8) or (self.color_type == "black" and self.row == 1):
             return True
 
         return False

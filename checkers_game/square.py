@@ -1,5 +1,3 @@
-import pygame
-import constants
 import copy
 
 
@@ -30,8 +28,8 @@ class Square:
         col = 1 + (square_number - 1) % 8
         return row, col
 
-    def select(self, board, pawn_radius):
-        pygame.draw.circle(board.screen, constants.SELECT_COLOR, self.get_center(), pawn_radius, 4)
+    def select(self, pawn_radius, ui):
+        ui.draw_select_square(self.get_center(), pawn_radius)
         self.selected = True
 
     def deselect(self):
@@ -40,10 +38,6 @@ class Square:
     @staticmethod
     def is_valid_square_number(square_number):
         return True if 1 <= square_number <= 64 else False
-
-    @staticmethod
-    def is_marginal_column(square_number):
-        return True if (square_number % 8) == 0 or (square_number % 8) == 1 else False
 
     def copy(self):
         square_copy = copy.deepcopy(self)
