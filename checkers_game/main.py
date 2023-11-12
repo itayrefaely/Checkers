@@ -1,7 +1,6 @@
 import sys
 import pygame
-
-from checkers_game.board import Board
+from board import Board
 from ui import UI
 from move_handler import MoveHandler
 from agent_move_handler import AgentMoveHandler
