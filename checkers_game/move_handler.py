@@ -201,7 +201,7 @@ class MoveHandler:
 
     @staticmethod
     def get_pressed_square(board, pos):
-        row, col = pos[1] // board.square_size, pos[0] // board.square_size
+        row, col = pos[1] // board.square_size, pos[0] // board.square_size + 1
         square_number = 8 * (row - 1) + col
         if square_number > 64 or square_number < 1:
             square_number = 0
@@ -227,7 +227,8 @@ class MoveHandler:
         """
         for pawn in pawn_team:
             if pawn.highlighted:
-                pawn.unhighlight(board)
+                pawn.unhighlight()
+        board.draw()
 
     @staticmethod
     def find_prev_and_cur_pawns(pawn_team, square_number):
@@ -264,14 +265,14 @@ class MoveHandler:
     @staticmethod
     def deselect(board, pawn, next_squares):
         # Deselect the pawn
-        pawn.deselect(board)
+        pawn.deselect()
 
         # Deselect the next possible squares
         for square_number in next_squares:
             square = board.squares[square_number]
-            square.deselect(board, pawn.radius)
+            square.deselect()
 
-        pygame.display.flip()
+        board.draw()
 
     def move(self, board, pawn, next_square_number):
         """
@@ -285,11 +286,8 @@ class MoveHandler:
             next_square_number (int): The square number to move the pawn to.
         """
         clock = pygame.time.Clock()
-        start_pos = pawn.pos
+        start_pos = pawn.center
         end_pos = board.squares[next_square_number].get_center()
-
-        # Remove the original pawn from its square
-        self.clear_original_square(board, pawn)
 
         # Movement parameters
         duration = 200  # Duration of the movement in milliseconds
@@ -313,11 +311,8 @@ class MoveHandler:
             jump_square_number (int): The square number to move the pawn to after capturing.
         """
         clock = pygame.time.Clock()
-        start_pos = pawn.pos
+        start_pos = pawn.center
         end_pos = board.squares[jump_square_number].get_center()
-
-        # Clear the original square
-        self.clear_original_square(board, pawn)
 
         # Delete the opponent pawn
         opponent_square_number = Pawn.compute_opponent_square_number(pawn.square_number, jump_square_number)
@@ -331,18 +326,6 @@ class MoveHandler:
 
         # Update fields of pawn and it's new square
         self.update_move(board, pawn, jump_square_number)
-
-    @staticmethod
-    def clear_original_square(board, pawn):
-        """
-        Clear the original square occupied by the pawn.
-
-        Args:
-            board (Board): The game board.
-            pawn (Pawn): The pawn to be moved.
-        """
-        prev_square_number = pawn.square_number
-        board.squares[prev_square_number].draw(board.screen)
 
     @staticmethod
     def animate_movement(board, pawn, start_pos, end_pos, duration, start_time, clock):
@@ -372,7 +355,7 @@ class MoveHandler:
                 start_pos[1] + int((end_pos[1] - start_pos[1]) * t)
             )
 
-            pawn.pos = current_pos
+            pawn.center = current_pos
 
             board.draw()
             pygame.display.flip()
@@ -399,14 +382,16 @@ class MoveHandler:
         # Update fields of pawn and it's new square
         board.squares[pawn.square_number].free = True
         board.squares[next_square_number].free = False
-        pawn.pos = board.squares[next_square_number].get_center()
+        pawn.center = board.squares[next_square_number].get_center()
         pawn.square_number = next_square_number
         pawn.row, pawn.col = Square.compute_row_and_col(next_square_number)
 
         # Handle the case where the given move is a promoting move
         if pawn.is_promotion():
             board.promote_pawn(pawn)
-            pygame.display.flip()
+            if board.is_original_board:
+                board.draw()
+                pygame.display.flip()
 
     @staticmethod
     def is_losing_team(board, pawn_team):

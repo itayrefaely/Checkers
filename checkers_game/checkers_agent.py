@@ -12,26 +12,25 @@ class CheckersAgent:
 
     @staticmethod
     def load_model(model_filename):
-        # Get the current directory where this Python file is located
-        current_directory = os.path.dirname(os.path.abspath(__file__))
-
-        # Construct the full path to the pickle file
-        full_path = os.path.join(current_directory, model_filename)
-
+        full_path = CheckersAgent.get_file_path(model_filename)
         model = torch.load(full_path)
         return model
 
     @staticmethod
     def load_scaler(scaler_filename):
-        # Get the current directory where this Python file is located
-        current_directory = os.path.dirname(os.path.abspath(__file__))
-
-        # Construct the full path to the pickle file
-        full_path = os.path.join(current_directory, scaler_filename)
-
+        full_path = CheckersAgent.get_file_path(scaler_filename)
         with open(full_path, 'rb') as file:
             scaler = joblib.load(file)
         return scaler
+
+    @staticmethod
+    def get_file_path(filename):
+        """
+        Get the full path to the file based on the provided filename.
+        """
+        current_directory = os.path.dirname(os.path.abspath(__file__))
+        full_path = os.path.join(current_directory, filename)
+        return full_path
 
     def predict(self, board_eval):
         board_eval = self.scale_first_feature_value(board_eval)
@@ -49,5 +48,5 @@ class CheckersAgent:
             new_feature_value = self.scaler.transform(board_eval[0].reshape(-1, 1))[0][0]
             board_eval[0] = new_feature_value
             board_eval = np.array(board_eval).reshape(1, -1)
-        
+
         return board_eval

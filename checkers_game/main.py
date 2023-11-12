@@ -3,11 +3,12 @@ import pygame
 from board import Board
 from move_handler import MoveHandler
 from agent_move_handler import AgentMoveHandler
+import constants
 
 pygame.init()
 
 # Initialize the game board and display
-board = Board(960, 720)
+board = Board(board_side_length=constants.BOARD_SIDE_LENGTH)
 board.draw()
 pygame.display.flip()
 

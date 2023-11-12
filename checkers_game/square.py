@@ -9,16 +9,11 @@ class Square:
         self.row = row
         self.col = col
         self.number = Square.compute_square_number(row, col)
-        self.color = constants.LIGHT_SQUARE if (row + col) % 2 == 0 else constants.DARK_SQUARE
         self.free = True
         self.selected = False
 
-    def draw(self, screen):
-        pygame.draw.rect(screen, self.color,
-                         pygame.Rect(self.col * self.size, self.row * self.size, self.size, self.size))
-
     def get_center(self):
-        x = self.col * self.size + self.size // 2
+        x = (self.col - 1) * self.size + self.size // 2
         y = self.row * self.size + self.size // 2
         return x, y
 
@@ -39,8 +34,7 @@ class Square:
         pygame.draw.circle(board.screen, constants.SELECT_COLOR, self.get_center(), pawn_radius, 4)
         self.selected = True
 
-    def deselect(self, board, pawn_radius):
-        pygame.draw.circle(board.screen, constants.DARK_SQUARE, self.get_center(), pawn_radius, 4)
+    def deselect(self):
         self.selected = False
 
     @staticmethod

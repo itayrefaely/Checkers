@@ -1,29 +1,51 @@
+import os
 import pygame
 import constants
 from square import Square
 
 
 class Pawn:
-    def __init__(self, col, row, square_size, color, radius, queen=False):
+    def __init__(self, col, row, square_size, color, radius, queen=False, is_original_pawn=True):
         self.col = col
         self.row = row
-        self.square_size = square_size
-        self.pos = (col * square_size + square_size // 2, row * square_size + square_size // 2)
         self.square_number = Square.compute_square_number(row, col)
-        self.color_type = color
-        self.color = constants.BLUE if self.color_type == "blue" else constants.RED
         self.radius = radius
+        self.color_type = color
         self.queen = queen
-        self.highlighted = False
-        self.selected = False
         self.can_eat = False
         self.ate_this_turn = False
+        self.square_size = square_size
+
+        if is_original_pawn:
+            self.center = ((col - 1) * square_size + square_size // 2, row * square_size + square_size // 2)
+            self.highlighted = False
+            self.selected = False
+            self.texture = self.load_texture('white_pawn_icon.png') if self.color_type == "blue" else self.load_texture(
+                'black_pawn_icon.png')
+
+    def load_texture(self, pawn_file_name):
+        # Get the directory of the current script
+        current_script_directory = os.path.dirname(os.path.abspath(__file__))
+
+        # Add the file name to the sys.path
+        file_path = os.path.join(current_script_directory, pawn_file_name)
+
+        pawn_image = pygame.image.load(file_path)
+
+        # Scale the board texture to fit the board size
+        pawn_size = (4 * self.radius, 4 * self.radius)
+        pawn_texture = pygame.transform.scale(pawn_image, pawn_size)
+
+        return pawn_texture
 
     def draw(self, screen):
-        inner_color = tuple([abs(c - 20) for c in self.color])
-        pygame.draw.circle(screen, self.color, self.pos, self.radius)
-        pygame.draw.circle(screen, inner_color, self.pos, self.radius - 8)
-        pygame.draw.circle(screen, self.color, self.pos, self.radius - 15)
+        x, y = self.get_x_and_y()
+        screen.blit(self.texture, (x, y))
+
+    def get_x_and_y(self):
+        pawn_x = self.center[0] - 2 * self.radius
+        pawn_y = self.center[1] - 2 * self.radius
+        return pawn_x, pawn_y
 
     def get_next_squares(self, board):
         """"
@@ -145,23 +167,17 @@ class Pawn:
                     self.color_type == "blue" and self.row < opponent_row)
 
     def highlight(self, board):
-        center = self.pos
-        pygame.draw.circle(board.screen, constants.HIGHLIGHT_COLOR, center, self.radius, 4)
+        pygame.draw.circle(board.screen, constants.HIGHLIGHT_COLOR, self.center, self.radius, 4)
         self.highlighted = True
 
-    def unhighlight(self, board):
-        center = self.pos
-        pygame.draw.circle(board.screen, constants.RED, center, self.radius, 4)
+    def unhighlight(self):
         self.highlighted = False
 
     def select(self, board):
-        center = self.pos
-        pygame.draw.circle(board.screen, constants.SELECT_COLOR, center, self.radius, 4)
+        pygame.draw.circle(board.screen, constants.SELECT_COLOR, self.center, self.radius, 4)
         self.selected = True
 
-    def deselect(self, board):
-        center = self.pos
-        pygame.draw.circle(board.screen, constants.RED, center, self.radius, 4)
+    def deselect(self):
         self.selected = False
 
     def is_promotion(self):
@@ -175,7 +191,8 @@ class Pawn:
         return False
 
     def copy(self):
-        pawn_copy = Pawn(self.col, self.row, self.square_size, self.color_type, self.radius, self.queen)
+        pawn_copy = Pawn(self.col, self.row, self.square_size, self.color_type, self.radius, self.queen,
+                         is_original_pawn=False)
         pawn_copy.highlighted = self.highlighted
         pawn_copy.selected = self.selected
         pawn_copy.can_eat = self.can_eat

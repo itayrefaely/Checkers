@@ -1,3 +1,4 @@
+import os
 import numpy as np
 import pygame
 from pawn import Pawn
@@ -7,28 +8,55 @@ import constants
 
 
 class Board:
-    def __init__(self, width, height, is_initial_board=True):
+    def __init__(self, board_side_length, is_original_board=True):
         pygame.init()
+
+        self.num_rows = 8
+
+        # Define parameters
+        self.square_size = board_side_length // self.num_rows
+        self.board_width = self.num_rows * self.square_size
+        self.board_height = self.num_rows * self.square_size
+        self.pawn_radius = (self.square_size // 2) - 5
+
+        self.is_original_board = is_original_board
+
+        # Initiate squares array with a dummy square
+        self.squares = [Square(0, -1, -1)]
 
         # Initiate teams
         self.red_team = set()
         self.blue_team = set()
 
-        # Initiate squares array with a dummy square
-        self.squares = [Square(0, -1, -1)]
+        if is_original_board:
+            # Define parameters
+            self.screen_width = self.board_width + 3 * self.square_size
+            self.screen_height = self.board_height + 2 * self.square_size
+            self.board_x = 0
+            self.board_y = self.square_size
+            self.top_button_component_x = 0
+            self.top_button_component_y = 0
+            self.top_button_component_width = self.board_width
+            self.top_button_component_height = self.square_size
+            self.bottom_button_component_x = 0
+            self.bottom_button_component_y = self.board_height + self.square_size
+            self.right_button_component_x = self.board_width
+            self.right_button_component_y = 0
+            self.right_button_component_width = 3 * self.square_size
+            self.right_button_component_height = self.board_height + 2 * self.square_size
 
-        self.board_size = 10
+            # Load the game board texture
+            self.board_texture = self.load_board_texture('board_texture.png')
+            self.horizontal_button_component_texture = (
+                self.load_button_component_texture('horizontal_button_component_texture.png',
+                                                   self.top_button_component_width, self.top_button_component_height))
+            self.vertical_button_component_texture = (
+                self.load_button_component_texture('vertical_button_component_texture.png',
+                                                   self.right_button_component_width,
+                                                   self.right_button_component_height))
 
-        # Define parameters
-        self.square_size = min(width, height) // self.board_size  # 72
-        self.board_width = self.board_size * self.square_size  # 720
-        self.board_height = self.board_size * self.square_size  # 720
-        self.pawn_radius = (self.square_size // 2) - 5
-        self.is_initial_board = is_initial_board
-
-        if is_initial_board:
             # Create a pygame surface
-            self.screen = pygame.display.set_mode((self.board_width, self.board_height))
+            self.screen = pygame.display.set_mode((self.screen_width, self.screen_height))
             pygame.display.set_caption("Checkers")
 
             # Add the board squares and pawns
@@ -36,15 +64,75 @@ class Board:
             self.init_blue_pawns()
             self.init_red_pawns()
 
+    def load_board_texture(self, board_texture_file_name):
+        file_path = self.get_file_path(board_texture_file_name)
+        board_image = pygame.image.load(file_path)
+
+        # Scale the board texture to fit the board size
+        board_texture_size = (self.board_width, self.board_height)
+        board_texture = pygame.transform.scale(board_image, board_texture_size)
+
+        return board_texture
+
+    def load_button_component_texture(self, button_component_file_name, width, height):
+        file_path = self.get_file_path(button_component_file_name)
+        button_component_image = pygame.image.load(file_path)
+
+        # Scale the board texture to fit the board size
+        button_component_size = (width, height)
+        button_component_texture = pygame.transform.scale(button_component_image, button_component_size)
+
+        return button_component_texture
+
+    def draw(self):
+        """"
+        Draws the game board frame, the board itself and pawns
+        """
+        # Draw the board
+        self.screen.blit(self.board_texture, (self.board_x, self.board_y))
+        # Draw the board's frame
+        self.draw_frame(frame_thickness=3, x=self.board_x, y=self.board_y)
+        # Draw the top button component
+        self.screen.blit(self.horizontal_button_component_texture, (self.top_button_component_x,
+                                                                    self.top_button_component_y))
+        # Draw the bottom button component
+        self.screen.blit(self.horizontal_button_component_texture, (self.bottom_button_component_x,
+                                                                    self.bottom_button_component_y))
+        # Draw the right button component
+        self.screen.blit(self.vertical_button_component_texture, (self.right_button_component_x,
+                                                                  self.right_button_component_y))
+
+        for pawn in self.blue_team:
+            pawn.draw(self.screen)
+        for pawn in self.red_team:
+            pawn.draw(self.screen)
+
+    def draw_frame(self, frame_thickness, x, y):
+        """
+        Draws the game board frame, including the inner and outer frames, as well as row and column labels.
+        """
+        frame_color = constants.WHITE
+        inner_frame_rect = pygame.Rect(x, y, self.board_width, self.board_height)
+        pygame.draw.rect(self.screen, frame_color, inner_frame_rect, frame_thickness)
+
+    @staticmethod
+    def get_file_path(filename):
+        """
+        Get the full path to the file based on the provided filename.
+        """
+        current_directory = os.path.dirname(os.path.abspath(__file__))
+        full_path = os.path.join(current_directory, filename)
+        return full_path
+
     def init_squares(self):
-        for row in range(1, self.board_size - 1):
-            for col in range(1, self.board_size - 1):
+        for row in range(1, self.num_rows + 1):
+            for col in range(1, self.num_rows + 1):
                 square = Square(self.square_size, row, col)
                 self.squares.append(square)
 
     def init_blue_pawns(self):
         for row in range(1, 4):
-            for col in range(1, self.board_size - 1):
+            for col in range(1, self.num_rows + 1):
                 if (row + col) % 2 != 0:
                     pawn = Pawn(col, row, self.square_size, "blue", self.pawn_radius)
                     self.blue_team.add(pawn)
@@ -54,7 +142,7 @@ class Board:
 
     def init_red_pawns(self):
         for row in range(6, 9):
-            for col in range(1, self.board_size - 1):
+            for col in range(1, self.num_rows + 1):
                 if (row + col) % 2 != 0:
                     pawn = Pawn(col, row, self.square_size, "red", self.pawn_radius)
                     self.red_team.add(pawn)
@@ -65,31 +153,11 @@ class Board:
     def get_square_size(self):
         return self.square_size
 
-    def draw_frame(self):
-        """
-        Draws the game board frame, including the inner and outer frames, as well as row and column labels.
-        """
-        frame_color = constants.WHITE
-        frame_thickness = 5
-
-        self.draw_inner_frame(frame_color, frame_thickness)
-        self.draw_outer_frame(frame_color, frame_thickness)
-        self.label_rows_and_columns(frame_color)
-
-    def draw_inner_frame(self, color, thickness):
-        inner_frame_rect = pygame.Rect(0.1 * self.board_width - 5, 0.1 * self.board_height - 5,
-                                       0.8 * self.board_width + 10, 0.8 * self.board_height + 10)
-        pygame.draw.rect(self.screen, color, inner_frame_rect, thickness)
-
-    def draw_outer_frame(self, color, thickness):
-        outer_frame_rect = pygame.Rect(0, 0, self.board_width, self.board_height)
-        pygame.draw.rect(self.screen, color, outer_frame_rect, thickness)
-
     def label_rows_and_columns(self, color):
         font = pygame.font.SysFont('Arial', 30)
 
-        for i in range(1, self.board_size - 1):
-            row_label = font.render(str(self.board_size - i - 1), True, color)
+        for i in range(1, self.num_rows - 1):
+            row_label = font.render(str(self.num_rows - i - 1), True, color)
             row_rect1, row_rect2 = row_label.get_rect(), row_label.get_rect()
             row_rect1.center, row_rect2.center = (self.square_size // 2, (i + 0.5) * self.square_size), (
                 self.board_width - (self.square_size // 2), (i + 0.5) * self.square_size)
@@ -103,18 +171,6 @@ class Board:
                 (i + 0.5) * self.square_size, self.board_height - (self.board_height - self.square_size // 2))
             self.screen.blit(col_label, col_rect1)
             self.screen.blit(col_label, col_rect2)
-
-    def draw(self):
-        """"
-        Draws the game board frame, the board itself and pawns
-        """
-        self.draw_frame()
-        for square in self.squares[1:]:
-            square.draw(self.screen)
-        for pawn in self.blue_team:
-            pawn.draw(self.screen)
-        for pawn in self.red_team:
-            pawn.draw(self.screen)
 
     def get_occupying_pawn(self, square_number):
         """"
@@ -137,14 +193,14 @@ class Board:
         square_number = pawn.square_number
         self.squares[square_number].free = True
 
-        if self.is_initial_board:
-            # Draw a square on top of the pawn 
-            self.squares[square_number].draw(self.screen)
-
         if pawn.color_type == "red":
             self.red_team.remove(pawn)
         else:
             self.blue_team.remove(pawn)
+
+        if self.is_original_board:
+            # Draw the updated board
+            self.draw()
 
         del pawn
 
@@ -162,7 +218,7 @@ class Board:
     def promote_pawn(self, pawn):
         copy = pawn.copy()
         self.delete_pawn(pawn)
-        queen = Queen(copy.col, copy.row, self.square_size, copy.color_type, self.pawn_radius, self.screen)
+        queen = Queen(copy.col, copy.row, self.square_size, copy.color_type, self.pawn_radius)
         self.add_pawn(queen)
 
     def deserialize(self):
@@ -221,7 +277,7 @@ class Board:
         return prev_pawn_value
 
     def copy(self):
-        board_copy = Board(self.board_width, self.board_height, is_initial_board=False)
+        board_copy = Board(self.board_width, is_original_board=False)
 
         # Copy the squares, except the dummy
         for square in self.squares[1:]:
