@@ -27,16 +27,6 @@ class Queen(Pawn):
 
         return crown_texture
 
-    def draw(self, screen):
-        # Call the draw method of the parent class (Pawn) to draw the pawn
-        super().draw(screen)
-
-        # Calculate the position to center the crown on top of the pawn
-        x, y = self.get_crown_x_and_y()
-
-        # Draw the crown image on top of the pawn
-        screen.blit(self.crown_texture, (x, y))
-
     def get_crown_x_and_y(self):
         crown_x = self.center[0] - 0.725 * self.radius
         crown_y = self.center[1] - 0.8 * self.radius

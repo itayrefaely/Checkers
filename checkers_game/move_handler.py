@@ -7,6 +7,7 @@ class MoveHandler:
 
     def __init__(self):
         self.is_player_turn = True
+        self.pressed = False  # Indicates whether next pawn to move already chosen
 
     def initialize_new_move(self, board, ui):
         """
@@ -206,7 +207,7 @@ class MoveHandler:
 
     @staticmethod
     def get_pressed_square(board, pos):
-        row, col = pos[1] // board.square_size, pos[0] // board.square_size + 1
+        row, col = pos[1] // board.square_size, int((pos[0] + 0.5 * board.square_size) // board.square_size)
         if 1 <= row <= 8 and 1 <= col <= 8:
             square_number = 8 * (row - 1) + col
         else:
@@ -297,7 +298,7 @@ class MoveHandler:
         end_pos = board.squares[next_square_number].get_center()
 
         # Movement parameters
-        duration = 200  # Duration of the movement in milliseconds
+        duration = 250  # Duration of the movement in milliseconds
         start_time = pygame.time.get_ticks()
 
         self.animate_movement(pawn, start_pos, end_pos, duration, start_time, clock, ui)
@@ -327,7 +328,7 @@ class MoveHandler:
         self.delete_opponent_pawn(board, opponent_square_number, ui)
 
         # Movement parameters
-        duration = 250  # Duration of the movement in milliseconds
+        duration = 300  # Duration of the movement in milliseconds
         start_time = pygame.time.get_ticks()
 
         self.animate_movement(pawn, start_pos, end_pos, duration, start_time, clock, ui)

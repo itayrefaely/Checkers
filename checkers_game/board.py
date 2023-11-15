@@ -24,19 +24,18 @@ class Board:
         self.squares = [Square(0, -1, -1)]
 
         # Initiate teams
-        self.black_team = set()
         self.white_team = set()
+        self.black_team = set()
 
         if is_original_board:
             # Define parameters
-            self.x = 0
-            self.y = self.square_size
+            self.pos = (0.5 * self.square_size, self.square_size)
             # Load the game board texture
             self.texture = self.load_texture('board_texture.png', self.width, self.height)
             # Initialize the board squares and pawns
             self.init_squares()
-            self.init_blue_pawns()
-            self.init_red_pawns()
+            self.init_white_pawns()
+            self.init_black_pawns()
 
     def load_texture(self, texture_file_name, width, height):
         file_path = self.get_file_path(texture_file_name)
@@ -63,7 +62,7 @@ class Board:
                 square = Square(self.square_size, row, col)
                 self.squares.append(square)
 
-    def init_blue_pawns(self):
+    def init_white_pawns(self):
         for row in range(1, 4):
             for col in range(1, self.num_rows + 1):
                 if (row + col) % 2 != 0:
@@ -73,7 +72,7 @@ class Board:
                     # Mark the relevant square as not free
                     self.squares[pawn.square_number].free = False
 
-    def init_red_pawns(self):
+    def init_black_pawns(self):
         for row in range(6, 9):
             for col in range(1, self.num_rows + 1):
                 if (row + col) % 2 != 0:
@@ -174,3 +173,12 @@ class Board:
         board_copy.screen = None
 
         return board_copy
+    
+    def reset(self):
+        self.squares = [Square(0, -1, -1)]
+        self.white_team = set()
+        self.black_team = set()
+
+        self.init_squares()
+        self.init_white_pawns()
+        self.init_black_pawns()

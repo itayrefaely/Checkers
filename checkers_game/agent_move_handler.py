@@ -6,10 +6,21 @@ import board_evaluator
 
 class AgentMoveHandler(MoveHandler):
 
-    def __init__(self):
+    def __init__(self, difficulty):
         super().__init__()
         self.agent = CheckersAgent()
-        self.max_depth = 5
+        self.max_depth = None
+        self.difficulty = None
+        self.set_difficulty(difficulty)
+
+    def set_difficulty(self, difficulty):
+        self.difficulty = difficulty
+        if difficulty == "EASY":
+            self.max_depth = 1
+        elif difficulty == "MEDIUM":
+            self.max_depth = 3
+        else:
+            self.max_depth = 5
 
     def play(self, board, ui):
         depth = 0
@@ -189,8 +200,19 @@ class AgentMoveHandler(MoveHandler):
         else:
             return min(best_move_score, move_score)
 
-    def evaluate_board(self, board):
+    def evaluate_board(self, board, reverse=False):
         deserialized_board = board.deserialize()
+        if reverse:
+            deserialized_board = board_evaluator.reverse(deserialized_board)
         board_eval = board_evaluator.get_metrics(deserialized_board)
         move_score = self.agent.predict(board_eval)
         return move_score
+
+    def offer_draw(self, board):
+        agent_pos_eval = self.evaluate_board(board)
+        human_pos_eval = self.evaluate_board(board, reverse=True)
+        if (human_pos_eval - agent_pos_eval > 0.3 or
+                (abs(agent_pos_eval - human_pos_eval) <= 0.1 and len(board.black_team) == len(board.white_team) == 1)):
+            return True
+
+        return False

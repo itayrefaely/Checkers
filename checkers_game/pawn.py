@@ -16,7 +16,7 @@ class Pawn:
         self.square_size = square_size
 
         if is_original_pawn:
-            self.center = ((col - 1) * square_size + square_size // 2, row * square_size + square_size // 2)
+            self.center = ((col - 0.5) * square_size + square_size // 2, row * square_size + square_size // 2)
             self.highlighted = False
             self.selected = False
             self.texture = self.load_texture('white_pawn_icon.png') if self.color_type == "white" else (

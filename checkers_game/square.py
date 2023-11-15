@@ -11,7 +11,7 @@ class Square:
         self.selected = False
 
     def get_center(self):
-        x = (self.col - 1) * self.size + self.size // 2
+        x = (self.col - 0.5) * self.size + self.size // 2
         y = self.row * self.size + self.size // 2
         return x, y
 

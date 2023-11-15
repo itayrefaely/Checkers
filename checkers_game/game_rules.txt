@@ -1,0 +1,16 @@
+Game Rules for American Checkers
+
+1. The game is only played on the dark squares.
+2. Pawns can only move forward diagonally.
+3. When a pawn reaches the opposite side of the board
+   it is promoted to a king.
+4. Kings can also move backwards but only one square at
+   a time (** no jumping ! **).
+5. Capturing is done by jumping over an opponent's piece and
+   landing in the empty square on the other side.
+6. You can capture multiple pieces in a single turn as long
+   as you make a continuous diagonal line of captured pieces.
+7. If a capture is possible in the current move then you
+   ** must capture ! **.
+8. If you have multiple possible captures you can choose
+   which one to make.
