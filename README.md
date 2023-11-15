@@ -2,8 +2,7 @@
 Follows the official game rules of American Checkers, also called English Draughts.
 
 ## How to run the code
-Make sure you have python installed on your machine. \
-Then, install requirements:
+Make sure you have python installed on your machine. Then, install requirements:
 ```
 pip install pygame numpy scikit-learn torch joblib
 ```
