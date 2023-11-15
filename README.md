@@ -8,7 +8,7 @@ pip install pygame numpy scikit-learn torch joblib
 ```
 
 ### Run the game
-From within the Checkers directory, run the following command: (might take approx. 30 seconds to load on the first time)
+From within the Checkers directory, run the following command (might take approx. 30 seconds to load on the first time)
 ```
 python checkers_game/main.py
 ```
