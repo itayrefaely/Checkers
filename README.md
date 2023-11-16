@@ -1,4 +1,4 @@
-# Player vs Computer American Checkers Game
+# Player vs Bot American Checkers Game
 
 ## Overview
 
@@ -22,7 +22,7 @@ In the "agent_creation" folder, Jupyter Notebook was used to test various neural
 The chosen model was integrated into the "checkers_game" folder, responsible for executing all game logic and gameplay, including the user interface and the Checkers bot's move handler.
 
 ### Advanced AI with Minimax Algorithm
-In addition to the neural network model, I implemented a Minimax algorithm with alpha-beta pruning in hard mode, providing a formidable opponent.
+In addition to the neural network model, I implemented a Minimax algorithm with ⍺-β pruning in hard mode, providing a formidable opponent.
 
 ## Technologies Used
 
