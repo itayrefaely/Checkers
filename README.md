@@ -1,5 +1,16 @@
 # Player vs Bot American Checkers Game
 
+<table>
+  <tr>
+    <td style="padding-right: 20px;">
+      <img src="/assets/Screenshot%202023-11-16%20at%2022.26.43.png" width="500">
+    </td>
+    <td>
+      <img src="/assets/Screenshot%202023-11-16%20at%2022.29.06.png" width="400">
+    </td>
+  </tr>
+</table>
+
 ## Overview
 
 Welcome to my Player vs Computer American Checkers game! This project demonstrates my software engineering and machine learning skills. The game incorporates various technologies, data manipulation, and artificial intelligence to create an engaging and challenging experience.
