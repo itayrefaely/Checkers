@@ -1,4 +1,4 @@
-# Player vs Bot American Checkers Game
+# American Checkers - AI
 
 <table>
   <tr>
