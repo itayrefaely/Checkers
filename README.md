@@ -44,7 +44,9 @@ Throughout the project, I utilized various technologies, including:
 - scikit-learn: For machine learning algorithms and data manipulation.
 - Jupyter Notebook: Facilitating model testing and analysis.
 - pandas: For data manipulation and analysis.
-- pygame: Enabling the creation of the graphical user interface.
+- pygame: Enabling the creation of the graphical user interface. 
+  
+And more...
 
 ## How to run the code
 Make sure you have python installed on your machine. Then, install requirements:
