@@ -28,12 +28,12 @@ In addition to the neural network model, I implemented a Minimax algorithm with 
 
 Throughout the project, I utilized various technologies, including:
 
-numpy: For numerical operations.
-PyTorch: For implementing and training neural network models.
-scikit-learn: For machine learning algorithms and data manipulation.
-Jupyter Notebook: Facilitating model testing and analysis.
-pandas: For data manipulation and analysis.
-pygame: Enabling the creation of the graphical user interface.
+- numpy: For numerical operations.
+- PyTorch: For implementing and training neural network models.
+- scikit-learn: For machine learning algorithms and data manipulation.
+- Jupyter Notebook: Facilitating model testing and analysis.
+- pandas: For data manipulation and analysis.
+- pygame: Enabling the creation of the graphical user interface.
 
 ## Conclusion
 
