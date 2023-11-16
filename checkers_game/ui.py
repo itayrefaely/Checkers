@@ -25,7 +25,7 @@ class UI:
         # Define button components
         self.button_components = {}
         self.init_button_components()
-        self.initial_background = ButtonComponent('initial_background_texture.png',
+        self.initial_background = ButtonComponent('textures/initial_background_texture.png',
                                                   (self.screen_width, self.screen_height), (0, 0))
 
         self.in_game_font = self.load_font('DragonHunter_font.otf')
@@ -34,18 +34,18 @@ class UI:
         self.rendered_game_rules = []
 
     def init_button_components(self):
-        self.button_components["top"] = ButtonComponent('horizontal_button_component_texture.png',
+        self.button_components["top"] = ButtonComponent('textures/horizontal_button_component_texture.png',
                                                         (self.board.width, self.board.square_size),
                                                         (0.5 * self.board.square_size, 0))
-        self.button_components["bottom"] = ButtonComponent('horizontal_button_component_texture.png',
+        self.button_components["bottom"] = ButtonComponent('textures/horizontal_button_component_texture.png',
                                                            (self.board.width, self.board.square_size),
                                                            (0.5 * self.board.square_size, self.board.height +
                                                             self.board.square_size))
-        self.button_components["right"] = ButtonComponent('vertical_button_component_texture.png',
+        self.button_components["right"] = ButtonComponent('textures/vertical_button_component_texture.png',
                                                           (self.screen_width - self.board.width -
                                                            0.5 * self.board.square_size, self.screen_height),
                                                           (self.board.width + 0.5 * self.board.square_size, 0))
-        self.button_components["left"] = ButtonComponent('vertical_button_component_texture.png',
+        self.button_components["left"] = ButtonComponent('textures/vertical_button_component_texture.png',
                                                          (0.5 * self.board.square_size, self.screen_height),
                                                          (0, 0))
 

@@ -10,7 +10,7 @@ class Queen(Pawn):
 
         if is_original_queen:
             # Load the crown image
-            self.crown_texture = self.load_crown_texture('crown_vector_icon.png')
+            self.crown_texture = self.load_crown_texture('textures/crown_vector_icon.png')
 
     def load_crown_texture(self, crown_file_name):
         # Get the directory of the current script

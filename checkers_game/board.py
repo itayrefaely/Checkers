@@ -31,7 +31,7 @@ class Board:
             # Define parameters
             self.pos = (0.5 * self.square_size, self.square_size)
             # Load the game board texture
-            self.texture = self.load_texture('board_texture.png', self.width, self.height)
+            self.texture = self.load_texture('textures/board_texture.png', self.width, self.height)
             # Initialize the board squares and pawns
             self.init_squares()
             self.init_white_pawns()

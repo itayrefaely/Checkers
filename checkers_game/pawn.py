@@ -19,8 +19,8 @@ class Pawn:
             self.center = ((col - 0.5) * square_size + square_size // 2, row * square_size + square_size // 2)
             self.highlighted = False
             self.selected = False
-            self.texture = self.load_texture('white_pawn_icon.png') if self.color_type == "white" else (
-                self.load_texture('black_pawn_icon.png'))
+            self.texture = self.load_texture('textures/white_pawn_icon.png') if self.color_type == "white" else (
+                self.load_texture('textures/black_pawn_icon.png'))
 
     def load_texture(self, pawn_file_name):
         # Get the directory of the current script
