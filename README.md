@@ -6,7 +6,7 @@
       <img src="/assets/Screenshot%202023-11-16%20at%2022.26.43.png" width="500">
     </td>
     <td>
-      <img src="/assets/Screenshot%202023-11-16%20at%2022.29.06.png" width="400">
+      <img src="/assets/Screenshot%202023-11-16%20at%2022.29.17.png" width="500">
     </td>
   </tr>
 </table>
@@ -46,12 +46,6 @@ Throughout the project, I utilized various technologies, including:
 - pandas: For data manipulation and analysis.
 - pygame: Enabling the creation of the graphical user interface.
 
-## Conclusion
-
-This Checkers game showcases my skills in software engineering, data manipulation, and machine learning. The fusion of advanced AI techniques, extensive dataset analysis, and a well-designed user interface highlights my ability to deliver a comprehensive software solution.
-
-Feel free to explore the codebase, and reach out if you have any questions or feedback!
-
 ## How to run the code
 Make sure you have python installed on your machine. Then, install requirements:
 ```
@@ -63,3 +57,14 @@ From within the Checkers directory, run the following command (might take approx
 ```
 python checkers_game/main.py
 ```
+
+\
+<img src="/assets/Screenshot%202023-11-16%20at%2022.29.38.png" style="display: block; margin: 0 auto;" width="700">
+
+---
+
+## Conclusion
+
+This Checkers game showcases my skills in software engineering, data manipulation, and machine learning. The fusion of advanced AI techniques, extensive dataset analysis, and a well-designed user interface highlights my ability to deliver a comprehensive software solution.
+
+Feel free to explore the codebase, and reach out if you have any questions or feedback!
