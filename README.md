@@ -22,7 +22,7 @@ In the "agent_creation" folder, Jupyter Notebook was used to test various neural
 The chosen model was integrated into the "checkers_game" folder, responsible for executing all game logic and gameplay, including the user interface and the Checkers bot's move handler.
 
 ### Advanced AI with Minimax Algorithm
-In addition to the neural network model, I implemented a Minimax algorithm with ⍺-β pruning in hard mode, providing a formidable opponent.
+In addition to the neural network model, I implemented a Minimax algorithm with ⍺-β pruning, that allows the Checkers bot to explore move trees up to depth 5 in hard mode, providing a formidable opponent.
 
 ## Technologies Used
 
