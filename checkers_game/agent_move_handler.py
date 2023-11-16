@@ -189,11 +189,10 @@ class AgentMoveHandler(MoveHandler):
 
     def get_move_score(self, board_copy, depth, alpha, beta, pawn, next_jumping_squares, is_maximizing_turn, ui):
         if next_jumping_squares:
-            return int(self.minimax(board_copy, depth, alpha, beta, is_maximizing_turn, ui, is_consecutive_capture=True,
-                                    capturing_pawn=pawn))
+            return self.minimax(board_copy, depth, alpha, beta, is_maximizing_turn, ui, is_consecutive_capture=True,
+                                capturing_pawn=pawn)
         else:
-            return int(
-                self.minimax(board_copy, depth + 1, alpha, beta, is_maximizing_turn=not is_maximizing_turn, ui=ui))
+            return self.minimax(board_copy, depth + 1, alpha, beta, is_maximizing_turn=not is_maximizing_turn, ui=ui)
 
     @staticmethod
     def update_best_move_score(is_maximizing_turn, best_move_score, move_score):

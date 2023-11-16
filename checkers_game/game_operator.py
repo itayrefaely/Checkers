@@ -24,28 +24,37 @@ class GameOperator:
 
     def handle_button_press(self, pressed_button):
         if pressed_button == "OFFER DRAW":
-            draw_accepted = self.agent_move_handler.offer_draw(self.board)
-            if draw_accepted:
-                self.handle_end_of_game(outcome="draw")
-            else:
-                self.ui.display_draw_rejected()
-                self.ui.draw()
-        if pressed_button == "RESIGN":
-            confirmed_resign = self.ui.display_confirm_resign()
-            if confirmed_resign:
-                self.handle_end_of_game(outcome="lost")
-            else:
-                self.ui.draw()
+            self.handle_offer_draw()
+        elif pressed_button == "RESIGN":
+            self.handle_resign()
         elif pressed_button == "OPTIONS":
-            chosen_option = self.ui.display_options()
-            if chosen_option == "CHANGE DIFFICULTY":
-                new_difficulty = self.ui.display_choose_difficulty()
-                if new_difficulty != self.agent_move_handler.difficulty:
-                    self.agent_move_handler.set_difficulty(new_difficulty)
-            elif chosen_option == "GAME RULES":
-                self.ui.display_game_rules(first_time=False)
+            self.handle_options()
 
-            self.ui.draw()
+        self.ui.draw()
+
+    def handle_offer_draw(self):
+        draw_accepted = self.agent_move_handler.offer_draw(self.board)
+        if draw_accepted:
+            self.handle_end_of_game(outcome="draw")
+        else:
+            self.ui.display_draw_rejected()
+
+    def handle_resign(self):
+        confirmed_resign = self.ui.display_confirm_resign()
+        if confirmed_resign:
+            self.handle_end_of_game(outcome="lost")
+
+    def handle_options(self):
+        chosen_option = self.ui.display_options()
+        if chosen_option == "CHANGE DIFFICULTY":
+            self.handle_change_difficulty()
+        elif chosen_option == "GAME RULES":
+            self.ui.display_game_rules(first_time=False)
+
+    def handle_change_difficulty(self):
+        new_difficulty = self.ui.display_choose_difficulty()
+        if new_difficulty != self.agent_move_handler.difficulty:
+            self.agent_move_handler.set_difficulty(new_difficulty)
 
     def handle_end_of_game(self, outcome):
         second_pressed_button = self.ui.display_end_of_game(outcome)
@@ -60,8 +69,9 @@ class GameOperator:
     def run(self):
         # Main game loop
         while True:
-
             if self.move_handler.is_losing_team(self.board, self.board.black_team):
+                # Introduce a 1-second delay
+                pygame.time.delay(500)
                 self.handle_end_of_game(outcome="lost")
 
             while self.move_handler.is_player_turn:
@@ -94,8 +104,9 @@ class GameOperator:
             pygame.display.flip()
 
             if self.move_handler.is_losing_team(self.board, self.board.white_team):
+                # Introduce a half-second delay
+                pygame.time.delay(500)
                 self.handle_end_of_game(outcome="won")
-
             else:
                 self.agent_move_handler.play(self.board, self.ui)
                 self.move_handler.is_player_turn = True
