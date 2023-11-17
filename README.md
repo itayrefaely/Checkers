@@ -15,13 +15,13 @@
 Welcome to my Player vs Computer American Checkers game! This project demonstrates my software engineering and machine learning skills. The game incorporates various technologies, data manipulation, and artificial intelligence to create an engaging and challenging experience.
 
 ## How to run the code
-Make sure you have python installed on your machine. Then, install requirements:
+Make sure you have python installed on your machine. Then, from within the Checkers directory, install requirements
 ```
-pip install pygame numpy scikit-learn torch joblib
+pip install -r requirements.txt
 ```
 
 ### Run the game
-From within the Checkers directory, run the following command (might take approx. 30 seconds to load on the first time)
+From within the Checkers directory, run the following command (might take approx. 1 minute to load on the first time)
 ```
 python checkers_game/main.py
 ```
